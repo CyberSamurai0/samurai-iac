@@ -16,7 +16,7 @@ apt update -y
 apt upgrade -y
 
 # Install Core Packages
-apt install git certbot -y
+apt install net-tools git certbot -y
 
 # Install Docker
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
@@ -69,3 +69,7 @@ EOL
 
 systemctl enable --now wings
 
+# Configure Firewall
+ufw allow from any to 22/tcp # Container SSH
+ufw allow from any to 8443 # Wings Daemon
+ufw allow from any to 2022 # Wings SFTP
