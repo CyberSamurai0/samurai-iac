@@ -38,6 +38,8 @@ cat >> /root/certbot-setup.sh << EOL
 certbot certonly -d $(HOSTNAME).cybersamur.ai --manual --preferred-challenges dns
 systemctl restart wings
 EOL
+chown root:root /root/certbot-setup.sh
+chmod 770 /root/certbot-setup.sh
 
 echo "Please execute /root/certbot-setup.sh to finish TLS setup on the deployed host"
 
