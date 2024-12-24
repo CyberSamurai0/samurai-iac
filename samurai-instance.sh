@@ -4,7 +4,7 @@ HOSTNAME="samurai02"
 USERNAME="vale"
 
 hostnamectl set-hostname $HOSTNAME
-echo "$(HOSTNAME).cybersamur.ai" >> /etc/hosts
+echo "$(HOSTNAME).cybersamur.ai" >> /etc/hosts ### THIS DOESNT WORK
 
 # Create Administrative User
 useradd $USERNAME
@@ -22,17 +22,17 @@ apt install net-tools git certbot -y
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 systemctl enable --now docker
 
-# Install Pterodactyl Wings
+# Install Pterodactyl Wings  ### THIS DOESNT WORK - WRONG ARCHITECTURE??
 mkdir -p /etc/pterodactyl
 curl -Lo /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
 chmod u+x /usr/local/bin/wings
 
 # Create Empty Wings Config File
 touch /etc/pterodactyl/config.yml
-echo "app_name: $(HOSTNAME)" >> /etc/pterodactyl/config.yml
+echo "app_name: $(HOSTNAME)" >> /etc/pterodactyl/config.yml    ### $(HOSTNAME) DOESNT WORK 
 
 # Set up SSL for HOSTNAME.cybersamur.ai
-touch /root/certbot-setup.sh
+touch /root/certbot-setup.sh   ### $(HOSTNAME) DOESNT WORK 
 cat >> /root/certbot-setup.sh << EOL
 #!/bin/bash
 certbot certonly -d $(HOSTNAME).cybersamur.ai --manual --preferred-challenges dns
