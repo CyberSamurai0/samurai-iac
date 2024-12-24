@@ -1,4 +1,4 @@
-# Cloud-Init Template
+# Infrastructure as Code Template
 Used to enhance the deployment of Pterodactyl Wings nodes for my own personal topology
 
 ### Example Usage
