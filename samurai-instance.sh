@@ -70,6 +70,6 @@ EOL
 systemctl enable --now wings
 
 # Configure Firewall
-ufw allow from any to 22/tcp # Container SSH
-ufw allow from any to 8443 # Wings Daemon
-ufw allow from any to 2022 # Wings SFTP
+ufw allow from any to any proto tcp port 22 # Container SSH
+ufw allow from any to any port 8443 # Wings Daemon
+ufw allow from any to any port 2022 # Wings SFTP
