@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 HOSTNAME="samurai02"
 USERNAME="vale"
@@ -9,6 +9,7 @@ echo "$(HOSTNAME).cybersamur.ai" >> /etc/hosts ### THIS DOESNT WORK
 # Create Administrative User
 useradd $USERNAME
 usermod -aG sudo $USERNAME
+usermod -s /bin/bash $USERNAME
 mkdir /home/$USERNAME
 chown $USERNAME:$USERNAME /home/$USERNAME
 
