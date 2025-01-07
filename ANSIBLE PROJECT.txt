@@ -1,0 +1,122 @@
+ANSIBLE PROJECT
+
+
+adduser vale
+passwd vale
+usermod -aG wheel vale
+
+Ctrl+D
+
+ssh vale@<addr>
+
+sudo -i
+
+#################
+CONTROL NODE ONLY
+#################
+
+dnf install ansible -y
+
+vim /etc/hosts
+G
+o
+	<addr> samurai999.ans.lcl 999.ans.lcl
+:wq
+
+adduser ansible
+su ansible
+
+cd .
+mkdir test
+cd test
+
+vim inventory.yml
+i
+	nginx:
+		hosts:
+			samurai999:
+				ansible_host: <addr>
+		vars:
+			ansible_user: ansible
+:wq
+
+ssh-keygen
+<enter>
+<enter>
+<enter>
+
+scp ~/.ssh/id_rsa.pub root@999.ans.lcl:~
+
+################
+TARGET NODE ONLY
+################
+
+vim /etc/hosts
+G
+o
+	<control-addr> ans.lcl samurai000.ans.lcl 000.ans.lcl
+:wq
+
+adduser ansible
+
+visudo
+G
+o
+	ansible ALL=(ALL) NOPASSWD:ALL
+:wq
+
+mkdir /home/ansible/.ssh
+touch /home/ansible/.ssh/authorized_keys
+cat /root/id_rsa.pub >> /home/ansible/.ssh/authorized_keys
+
+cat /home/ansible/.ssh/authorized_keys
+
+#################
+CONTROL NODE ONLY
+#################
+
+ansible nginx -m ping -i inventory.yml
+
+vim /home/ansible/test/deploy-nginx-sites.yml
+i
+	- name: Deploy Latest NGINX Sites
+	  hosts: nginx
+	  tasks:
+	    - name: Install NGINX
+	      become: true
+	      ansible.builtin.dnf:
+	        name: nginx
+	        state: latest
+	        update_cache: yes
+
+	    - name: Add ans.lcl site to host
+	      become: true
+	      ansible.builtin.copy:
+	        src: /home/ansible/test/sites-available/ans.lcl
+	        dest: /etc/nginx/conf.d/ans.lcl
+	        owner: root
+	        group: root
+	        mode: "0644"
+
+	    - name: Configure Firewall for HTTP
+	      become: true
+	      ansible.posix.firewalld:
+	        service: "http"
+	        state: "enabled"
+	        permanent: true
+
+	    - name: Reload Firewall
+	      become: true
+	      ansible.builtin.systemd:
+	        name: firewalld
+	        state: reloaded
+
+	    - name: Restart NGINX
+	      become: true
+	      ansible.builtin.systemd:
+	        name: nginx
+	        state: started
+	        enabled: yes
+:wq
+
+ansible-playbook deploy-nginx-sites.yml -i inventory.yml
